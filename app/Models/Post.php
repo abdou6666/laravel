@@ -2,35 +2,26 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\File;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class Post
+class Post extends Model
 {
-    public static function all()
-    {
-        $files = File::files(resource_path("posts/"));
+    use HasFactory;
+    // protected $fillable = ['title', 'excerpt', 'body'];
+    protected $with = ['category', 'author']; //when fetching data it'll look for category & author aswell (jointure) & clean up route load/with
 
-        return array_map(function ($file) {
-            return $file->getContents();
-        }, $files);
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
-    public static function find($slug)
+    public function category()
     {
-
-        if (!file_exists($path = resource_path("posts/{$slug}.html"))) {
-
-            // dd('file doesnt exist'); //die dump 
-            // ddd('file doesnt exist'); //dump die debug
-            //ddd($path);
-            // abort(404);
-            throw new ModelNotFoundException();
-        }
-        return cache()->remember("posts.{$slug}", 1200, fn () => file_get_contents($path));
-        // now()->addHour(); or now()->addDay(); or in seconds ...
-        //cache $path for 1hr
-        //arrow function syntaxe :
-        // $post = cache()->remember("posts.{$slug}", now()->addMinute(20) => file_get_contents($path));
-
+        //hasOne , hasMany, belongTo , belongsToMany
+        return $this->belongsTo(Category::class);
+    }
+    public function author()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

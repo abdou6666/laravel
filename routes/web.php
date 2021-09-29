@@ -1,10 +1,9 @@
 <?php
 
+use App\Models\Category;
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
-use App\models\Post;
-
-use Spatie\YamlFrontMatter\YamlFrontMatter;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -18,46 +17,29 @@ use Spatie\YamlFrontMatter\YamlFrontMatter;
 */
 
 Route::get('/', function () {
+    return view('posts', [
+        'posts' => Post::latest()->get(),
+        'categories' => Category::all()
+    ]);
+})->name('home');
 
-    $doc = YamlFrontMatter::parseFile(resource_path('posts/my-fourth-post.html'));
-    ddd($doc->matter());
-    // $posts = Post::all();
-    // // ddd($posts[0]->getContents());
-    // return view('posts', [
-    //     'posts' => $posts
-    // ]);
-});
-/*
-        Route::get('posts/{post}', function ($slug) {
-
-
-
-            if (!file_exists($path = __DIR__ . "/../resources/posts/{$slug}.html")) {
-
-                // dd('file doesnt exist'); //die dump 
-                // ddd('file doesnt exist'); //dump die debug
-                //ddd($path);
-                // abort(404);
-                return redirect('/');
-            }
-            $post = cache()->remember("posts.{$slug}", now()->addMinute(20), function () use ($path) {
-                // now()->addHour(); or now()->addDay(); or in seconds ...
-                //cache $path for 1hr
-                //arrow function syntaxe :
-                // $post = cache()->remember("posts.{$slug}", now()->addMinute(20) => file_get_contents($path));
-                return file_get_contents($path);
-            });
-
-
-            //$post = file_get_contents($path);
-            return view('post', [
-                'post' =>  $post
-            ]);
-        })->where('post', '[A-z_\-]+'); //whereAlpha('post');
-        */
-Route::get('posts/{post}', function ($slug) {
-    $post = Post::find($slug);
+Route::get('posts/{post:slug}', function (Post $post) {
     return view('post', [
         'post' => $post
+    ]);
+});
+
+Route::get('categories/{category:slug}', function (Category $category) {
+    return view('posts', [
+        'posts' => $category->posts,
+        'currentCategory' => $category,
+        'categories' => Category::all()
+    ]);
+})->name('category');
+
+Route::get('authors/{author:username}', function (User $author) {
+    return view('posts', [
+        'posts' => $author->posts,
+        'categories' => Category::all()
     ]);
 });

@@ -1,21 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
+<x-layout>
+    @include ('_posts-header')
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/app.css" />
-    <title>My Blog</title>
-</head>
-
-<body>
-    <?php foreach ($posts as $post) : ?>
-        <article class="container">
-            <?= $post; ?>
-        </article>
-    <?php endforeach; ?>
-</body>
-
-
-</html>
+    <main class="max-w-6xl mx-auto mt-6 lg:mt-20 space-y-6">
+        @if ($posts->count())
+            <x-posts-grid :posts="$posts" />
+        @else
+            <p class="text-center">No posts yet. Please check back later.</p>
+        @endif
+    </main>
+</x-layout>
