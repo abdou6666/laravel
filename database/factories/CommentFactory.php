@@ -4,6 +4,9 @@ namespace Database\Factories;
 
 use App\Models\Comment;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\User;
+use App\Models\Post;
+use League\CommonMark\Node\Block\Paragraph;
 
 class CommentFactory extends Factory
 {
@@ -23,6 +26,10 @@ class CommentFactory extends Factory
     {
         return [
             //
+            'post_id' => Post::factory(),
+            'user_id' => User::factory(),
+
+            'body' => $this->faker->paragraph()
         ];
     }
 }
