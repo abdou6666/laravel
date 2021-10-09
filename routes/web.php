@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Route;
 use App\http\Controllers\registerController;
 use App\http\Controllers\SessionController;
 use App\http\Controllers\PostCommentsController;
-use App\Services\newslettre;
+use App\http\Controllers\NewslettreController;
+use App\Services\Newslettre;
 
 
 /*
@@ -22,22 +23,7 @@ use App\Services\newslettre;
 |
 */
 
-Route::post('newslettre', function () {
-
-    request()->validate([
-        'email' => 'required|email'
-    ]);
-
-
-    try {
-        $newslettre = new newslettre();
-        $newslettre->subscribe(request('email'));
-    } catch (\Exception $e) {
-        return redirect('/')->with('success', 'Something went wrong ! Try again.');
-    }
-
-    return redirect('/')->with('success', 'You are now signed up for our newslettre !');
-});
+Route::post('newslettre', NewslettreController::class);
 
 
 Route::get('/', [PostController::class, 'index'])->name('home');
@@ -55,6 +41,9 @@ Route::get('login', [SessionController::class, 'create'])->middleware('guest');
 Route::post('login', [SessionController::class, 'store'])->middleware('guest');
 
 Route::post('logout', [SessionController::class, 'destroy'])->middleware('auth');
+
+Route::get('admin/posts/create', [PostController::class, 'create'])->middleware('admin');
+Route::post('admin/posts', [PostController::class, 'store'])->middleware('admin');
 // Route::get('categories/{category:slug}', function (Category $category) {
 //     return view('posts', [
 //         'posts' => $category->posts,

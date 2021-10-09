@@ -5,21 +5,45 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\Post;
+use Illuminate\Validation\Rule;
+
+use Illuminate\Http\UploadedFile;
 
 class PostController extends Controller
 {
-     public function index(){
+    public function index()
+    {
 
-        return view('posts.index',[
+        return view('posts.index', [
             // request(['search']) convert it to array
-            'posts' => Post::latest()->filter(request(['search','category', 'author']))->paginate(2)->withQueryString()
-  
+            'posts' => Post::latest()->filter(request(['search', 'category', 'author']))->paginate(2)->withQueryString()
+
         ]);
-     }
-     public function show(Post $post){
-            return view('posts.show', [
-        'post' => $post
-             ]);
-     }
-       
-}   
+    }
+    public function show(Post $post)
+    {
+        return view('posts.show', [
+            'post' => $post
+        ]);
+    }
+    public function create()
+    {
+        return view('posts.create');
+    }
+
+    public function store()
+    {
+       request()->file('thumbnail')->store('thumbnails');
+        // $attributes = request()->validate([
+        //     'title' => 'required',
+        //     'excerpt' => 'required',
+        //     'thumbnail' => 'required',
+        //     'slug' => ['required', Rule::unique('posts', 'slug')],
+        //     'body' => 'required',
+        //     'category_id' => ['required', Rule::exists('categories', 'id')],
+        // ]);
+        // $attributes['user_id'] = auth()->id();
+        // Post::create($attributes);
+        // return redirect('/');
+    }
+}

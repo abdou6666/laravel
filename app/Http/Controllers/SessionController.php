@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-
+use Illuminate\Http\Request;
 
 class SessionController extends Controller
 {
@@ -22,10 +22,13 @@ class SessionController extends Controller
         // attempt to to athaunticate & log in user 
         // based on provided credentials
         // redirect with sucess msg
+        ///ddd($request);
+
         $attributes = request()->validate([
             'email' => 'required|email',
             'password' => 'required'
         ]);
+
         if (auth()->attempt($attributes)) {
             session()->regenerate(); //session fixation attack
             //redirect with flash message   
